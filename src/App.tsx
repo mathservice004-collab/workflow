@@ -1,274 +1,298 @@
 import React, { useState } from 'react';
 import {
     LayoutDashboard,
-    Link2,
-    Files,
-    Network,
-    PieChart,
+    Unlink,
+    BookOpen,
+    BrainCircuit,
     Settings,
-    Menu,
-    Bell,
     Search,
+    Bell,
     Plus,
     Slack,
-    ChevronRight,
     Database,
-    CloudCloud,
-    FileText
+    Cloud,
+    ChevronRight,
+    Zap,
+    Clock,
+    User,
+    LogOut,
+    Command
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
-// Dummy Data
-const CONNECTORS = [
-    { id: 'slack', name: 'Slack', icon: <Slack size={20} />, status: 'active', info: '3,421 messages indexed' },
-    { id: 'notion', name: 'Notion', icon: <Database size={20} />, status: 'active', info: '152 pages indexed' },
-    { id: 'drive', name: 'Google Drive', icon: <CloudCloud size={20} />, status: 'pending', info: 'Synching...' },
+// Helper for tailwind classes
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+
+// Sidebar Items
+const MENU_ITEMS = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'connectors', label: 'Connectors', icon: Unlink },
+    { id: 'knowledge', label: 'Knowledge Base', icon: BookOpen },
+    { id: 'insights', label: 'AI Insights', icon: BrainCircuit },
+    { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
-const RECENT_DOCS = [
-    { id: 1, title: 'Product Roadmap Q3', source: 'Notion', time: '2 hours ago' },
-    { id: 2, title: 'Feedback from #marketing', source: 'Slack', time: '5 hours ago' },
-    { id: 3, title: 'API Documentation v2', source: 'Drive', time: '1 day ago' },
-];
+// Content Components
+const Dashboard = () => (
+    <div className="space-y-8 max-w-6xl mx-auto">
+        <header className="flex flex-col gap-1">
+            <h1 className="text-3xl font-bold tracking-tight">Workspace <span className="gradient-text">Pulse</span></h1>
+            <p className="text-zinc-500 text-sm">Real-time status of your connected knowledge ecosystem.</p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+                { label: 'Total Index', value: '14,281', sub: '+241 today', icon: Database, color: 'text-indigo-400' },
+                { label: 'Sync Status', value: 'Optimal', sub: '99.9% uptime', icon: Zap, color: 'text-amber-400' },
+                { label: 'Active Query', value: '124', sub: 'Last 10 mins', icon: Clock, color: 'text-emerald-400' },
+            ].map((stat, i) => (
+                <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="glass p-6 rounded-2xl glass-hover"
+                >
+                    <div className="flex justify-between items-start mb-4">
+                        <stat.icon className={cn("w-5 h-5", stat.color)} />
+                        <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-zinc-400 uppercase tracking-widest font-bold">Live</span>
+                    </div>
+                    <div className="text-2xl font-bold mb-1 tracking-tight">{stat.value}</div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs text-zinc-500">{stat.label}</span>
+                        <span className="text-xs font-semibold text-zinc-400">{stat.sub}</span>
+                    </div>
+                </motion.div>
+            ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section className="glass p-8 rounded-3xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[60px] rounded-full" />
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                    <Command className="w-5 h-5 text-indigo-400" />
+                    Context Flow
+                </h3>
+                <div className="space-y-6">
+                    {[
+                        { title: 'Project X Roadmap', time: '2m ago', platform: 'Notion', user: 'Sarah' },
+                        { title: 'Marketing Feedback', time: '14m ago', platform: 'Slack', user: 'Alex' },
+                        { title: 'Financial Report v2', time: '1h ago', platform: 'Google Drive', user: 'System' },
+                    ].map((item, i) => (
+                        <div key={i} className="flex items-center justify-between group cursor-pointer p-2 -mx-2 hover:bg-white/5 rounded-xl transition-colors">
+                            <div className="flex gap-4 items-center">
+                                <div className="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center border border-white/5 font-bold text-zinc-600 text-xs">
+                                    {item.platform[0]}
+                                </div>
+                                <div>
+                                    <div className="text-sm font-semibold group-hover:text-indigo-400 transition-colors">{item.title}</div>
+                                    <div className="text-[10px] text-zinc-500 uppercase tracking-tighter">{item.platform} • By {item.user}</div>
+                                </div>
+                            </div>
+                            <div className="text-[10px] text-zinc-600 font-mono tracking-tighter">{item.time}</div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section className="glass p-8 rounded-3xl">
+                <h3 className="text-xl font-bold mb-2">Connected Connectors</h3>
+                <p className="text-xs text-zinc-500 mb-8">Manage authorization for your data sources.</p>
+
+                <div className="grid grid-cols-2 gap-4">
+                    {[
+                        { name: 'Slack', icon: Slack, status: 'Active', active: true },
+                        { name: 'Notion', icon: Database, status: 'Active', active: true },
+                        { name: 'G-Drive', icon: Cloud, status: 'Paused', active: false },
+                        { name: 'Custom', icon: Plus, status: 'Action', active: false },
+                    ].map((c) => (
+                        <div key={c.name} className={cn(
+                            "p-4 rounded-2xl border transition-all cursor-pointer flex items-center gap-3",
+                            c.active ? "bg-indigo-500/5 border-indigo-500/20" : "bg-white/[0.02] border-white/5 hover:border-white/10"
+                        )}>
+                            <div className={cn("p-2 rounded-lg", c.active ? "bg-indigo-500/20 text-indigo-400" : "bg-zinc-800 text-zinc-500")}>
+                                <c.icon className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <div className="text-xs font-bold">{c.name}</div>
+                                <div className={cn("text-[8px] uppercase tracking-widest", c.active ? "text-indigo-400" : "text-zinc-600")}>{c.status}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        </div>
+    </div>
+);
+
+const Connectors = () => (
+    <div className="max-w-4xl mx-auto py-12">
+        <h2 className="text-4xl font-black mb-4 tracking-tighter">Add <span className="gradient-text">Intelligence</span></h2>
+        <p className="text-zinc-500 mb-12">Select workspace to index and analyze for better context flow.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+                { id: 'slack', name: 'Slack Workspace', desc: 'Sync channels, threads and messages for team context.', icon: Slack, color: '#4A154B' },
+                { id: 'notion', name: 'Notion Workspace', desc: 'Index databases, pages and comments.', icon: Database, color: '#000000' },
+                { id: 'drive', name: 'Google Workspace', desc: 'Analyze docs, sheets and presentations.', icon: Cloud, color: '#4285F4' },
+            ].map((p) => (
+                <div key={p.id} className="glass p-8 rounded-3xl glass-hover flex flex-col items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-white/10" style={{ backgroundColor: `${p.color}20`, color: p.color }}>
+                        <p.icon className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-xl font-bold">{p.name}</h4>
+                    <p className="text-sm text-zinc-500 leading-relaxed">{p.desc}</p>
+                    <button className="mt-4 flex items-center gap-2 text-sm font-bold text-indigo-400 hover:gap-3 transition-all underline underline-offset-8">
+                        Connect Service <ChevronRight className="w-4 h-4 underline-none" />
+                    </button>
+                </div>
+            ))}
+            <div className="border border-dashed border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center gap-3 text-zinc-600 hover:border-white/20 transition-all cursor-pointer">
+                <Plus className="w-8 h-8" />
+                <span className="text-xs font-bold uppercase tracking-widest">Custom API Connector</span>
+            </div>
+        </div>
+    </div>
+);
 
 export default function App() {
     const [activeTab, setActiveTab] = useState('dashboard');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-    const navItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'connectors', label: 'Connectors', icon: Link2 },
-        { id: 'documents', label: 'Knowledge Base', icon: Files },
-        { id: 'graph', label: 'Context Graph', icon: Network },
-        { id: 'insights', label: 'Insights', icon: PieChart },
-        { id: 'settings', label: 'Settings', icon: Settings },
-    ];
+    const [searchFocused, setSearchFocused] = useState(false);
 
     return (
-        <div className="flex h-screen bg-black overflow-hidden font-sans">
+        <div className="flex h-screen w-full bg-black overflow-hidden selection:bg-indigo-500/30">
+            {/* Dynamic Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[150px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-600/10 blur-[150px] rounded-full delay-1000 animate-pulse" />
+            </div>
+
             {/* Sidebar */}
-            <motion.aside
-                initial={false}
-                animate={{ width: isSidebarOpen ? 260 : 80 }}
-                className="glass border-r border-white/5 flex flex-col z-20"
-            >
-                <div className="p-6 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center animate-glow">
-                        <Network className="text-white" size={20} />
+            <aside className="w-64 glass border-r border-white/5 flex flex-col z-50">
+                <div className="p-8 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
+                        <Command className="w-5 h-5 text-white" />
                     </div>
-                    {isSidebarOpen && (
-                        <span className="font-bold text-lg tracking-tight gradient-text">ContextFlow</span>
-                    )}
+                    <span className="font-extrabold text-lg tracking-tighter">Context<span className="text-indigo-500">Flow</span></span>
                 </div>
 
-                <nav className="flex-1 px-3 space-y-1">
-                    {navItems.map((item) => (
+                <nav className="flex-1 px-4 space-y-1">
+                    {MENU_ITEMS.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === item.id
-                                    ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_15px_-3px_rgba(99,102,241,0.2)]'
-                                    : 'text-zinc-500 hover:text-white hover:bg-white/5'
-                                }`}
+                            className={cn(
+                                "w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 text-sm font-medium",
+                                activeTab === item.id
+                                    ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-inner"
+                                    : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+                            )}
                         >
-                            <item.icon size={20} />
-                            {isSidebarOpen && <span className="font-medium">{item.label}</span>}
+                            <item.icon className="w-4 h-4" />
+                            {item.label}
                         </button>
                     ))}
                 </nav>
 
-                <div className="p-4 border-t border-white/5">
-                    <button
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-white transition-colors"
-                    >
-                        <Menu size={20} />
-                        {isSidebarOpen && <span className="text-sm">Collapse Sidebar</span>}
-                    </button>
+                <div className="p-6">
+                    <div className="glass p-4 rounded-2xl relative overflow-hidden group">
+                        <div className="absolute -right-4 -top-4 w-12 h-12 bg-indigo-500/20 rounded-full blur-xl group-hover:w-16 transition-all" />
+                        <div className="text-[10px] font-bold text-zinc-500 mb-2 tracking-widest uppercase">Pro Plan</div>
+                        <div className="text-xs font-bold text-white mb-2 underline">Manage Billing</div>
+                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: '84%' }}
+                                className="h-full bg-indigo-500"
+                            />
+                        </div>
+                        <div className="mt-2 text-[8px] text-zinc-600 flex justify-between uppercase font-bold tracking-tighter">
+                            <span>8.4 GB Used</span>
+                            <span>10 GB Total</span>
+                        </div>
+                    </div>
                 </div>
-            </motion.aside>
+            </aside>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col overflow-hidden relative">
-                {/* Header */}
-                <header className="h-16 border-b border-white/5 flex items-center justify-between px-8 z-10 glass">
-                    <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 w-96 focus-within:border-indigo-500/50 transition-all">
-                        <Search className="text-zinc-500" size={18} />
+            <main className="flex-1 flex flex-col min-w-0 z-10">
+                {/* Top Navbar */}
+                <header className="h-20 border-b border-white/5 flex items-center justify-between px-10 glass">
+                    <div className={cn(
+                        "flex items-center gap-3 bg-white/5 border rounded-2xl px-5 py-2.5 transition-all duration-500 w-[400px]",
+                        searchFocused ? "border-indigo-500/50 bg-white/10 w-[500px]" : "border-white/5"
+                    )}>
+                        <Search className={cn("w-4 h-4 transition-colors", searchFocused ? "text-indigo-400" : "text-zinc-500")} />
                         <input
                             type="text"
-                            placeholder="Search anything across your workspace..."
-                            className="bg-transparent border-none outline-none text-sm text-white w-full"
+                            placeholder="Instant find across all sources..."
+                            onFocus={() => setSearchFocused(true)}
+                            onBlur={() => setSearchFocused(false)}
+                            className="bg-transparent border-none outline-none text-sm w-full font-medium"
                         />
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <button className="relative text-zinc-400 hover:text-white transition-colors">
-                            <Bell size={20} />
-                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-500 rounded-full border-2 border-black" />
-                        </button>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border border-white/20 p-[1px]">
-                            <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-[10px] font-bold">JD</div>
+                        <div className="flex -space-x-2">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center text-[10px] font-black hover:z-10 cursor-pointer">
+                                    {['A', 'J', 'S'][i - 1]}
+                                </div>
+                            ))}
+                            <div className="w-8 h-8 rounded-full border-2 border-black bg-indigo-600 flex items-center justify-center text-[10px] cursor-pointer">+</div>
+                        </div>
+
+                        <div className="h-8 w-[1px] bg-white/10" />
+
+                        <div className="flex items-center gap-4">
+                            <button className="p-2.5 rounded-xl hover:bg-white/5 text-zinc-400 transition-colors relative">
+                                <Bell className="w-5 h-5" />
+                                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-indigo-500 rounded-full border-2 border-black" />
+                            </button>
+                            <div className="flex items-center gap-3 pl-2 border-l border-white/5">
+                                <div className="text-right hidden sm:block">
+                                    <div className="text-xs font-bold">Admin Workspace</div>
+                                    <div className="text-[10px] text-zinc-500 font-medium">Free Tier • Standard</div>
+                                </div>
+                                <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-indigo-500 to-violet-600 p-[1px]">
+                                    <div className="w-full h-full bg-black rounded-2xl flex items-center justify-center overflow-hidden">
+                                        <User className="w-5 h-5 text-indigo-400" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </header>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-8 relative">
+                <section className="flex-1 overflow-y-auto p-10 relative">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeTab}
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
                         >
-                            {activeTab === 'dashboard' && <DashboardView />}
-                            {activeTab === 'connectors' && <ConnectorsView />}
-                            {/* Other views would follow similar patterns */}
-                            {['documents', 'graph', 'insights', 'settings'].includes(activeTab) && (
-                                <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-500 uppercase tracking-widest text-xs">
-                                    <div className="p-4 rounded-full bg-white/5 mb-4 animate-pulse">
-                                        <LayoutDashboard size={40} className="text-zinc-700" />
+                            {activeTab === 'dashboard' && <Dashboard />}
+                            {activeTab === 'connectors' && <Connectors />}
+                            {['knowledge', 'insights', 'settings'].includes(activeTab) && (
+                                <div className="flex flex-col items-center justify-center h-[50vh] text-center">
+                                    <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mb-6">
+                                        <Cloud className="w-10 h-10 text-indigo-500/40 animate-bounce" />
                                     </div>
-                                    {activeTab} Module coming soon
+                                    <h3 className="text-2xl font-bold mb-2 uppercase tracking-tighter italic">Module <span className="gradient-text">Syncing</span></h3>
+                                    <p className="text-zinc-500 text-sm max-w-xs">{activeTab} module is being optimized for your workspace architecture. Please stand by.</p>
                                 </div>
                             )}
                         </motion.div>
                     </AnimatePresence>
-                </div>
-
-                {/* Decorative Background Elements */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+                </section>
             </main>
-        </div>
-    );
-}
-
-function DashboardView() {
-    return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome Back, <span className="gradient-text">Creator</span></h1>
-                <p className="text-zinc-500">Your workspace is 100% indexed. 3,572 items analyzed today.</p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-6">
-                <StatsCard label="Connected Nodes" value="12" sub="Across 3 platforms" trend="+2 this week" />
-                <StatsCard label="Recent Sync" value="4m ago" sub="Slack #dev-channel" trend="Up to date" />
-                <StatsCard label="System Load" value="Optimal" sub="Latency: 42ms" trend="99.9% uptime" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-8">
-                <div className="glass-card rounded-2xl p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-semibold text-lg flex items-center gap-2">
-                            <Files size={18} className="text-indigo-400" />
-                            Recent Documents
-                        </h3>
-                        <button className="text-xs text-indigo-400 hover:text-indigo-300">View All</button>
-                    </div>
-                    <div className="space-y-4">
-                        {RECENT_DOCS.map(doc => (
-                            <div key={doc.id} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-white/5">
-                                        <FileText size={18} className="text-zinc-400" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-medium">{doc.title}</h4>
-                                        <span className="text-xs text-zinc-500">{doc.source}</span>
-                                    </div>
-                                </div>
-                                <div className="text-xs text-zinc-600">{doc.time}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="glass-card rounded-2xl p-6 overflow-hidden relative">
-                    <div className="mb-6">
-                        <h3 className="font-semibold text-lg flex items-center gap-2">
-                            <Network size={18} className="text-purple-400" />
-                            Context Graph Preview
-                        </h3>
-                    </div>
-                    <div className="h-48 flex items-center justify-center relative">
-                        {/* Fake Graph Visualization */}
-                        <div className="absolute w-12 h-12 rounded-full bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center animate-pulse">
-                            <div className="w-3 h-3 rounded-full bg-indigo-500" />
-                        </div>
-                        {[0, 60, 120, 180, 240, 300].map(deg => (
-                            <div
-                                key={deg}
-                                className="absolute w-8 h-8 rounded-full bg-white/10 border border-white/10"
-                                style={{ transform: `rotate(${deg}deg) translateX(80px)` }}
-                            />
-                        ))}
-                        <svg className="absolute inset-0 w-full h-full opacity-20">
-                            <line x1="50%" y1="50%" x2="60%" y2="30%" stroke="white" strokeWidth="1" />
-                            <line x1="50%" y1="50%" x2="40%" y2="70%" stroke="white" strokeWidth="1" />
-                        </svg>
-                    </div>
-                    <p className="text-xs text-center text-zinc-500 mt-4">Exploring 48 potential connections found in your workspace.</p>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function ConnectorsView() {
-    return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">Workspace Connectors</h1>
-                    <p className="text-zinc-500">Manage and monitor your data flow integrations.</p>
-                </div>
-                <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-full font-semibold transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
-                    <Plus size={20} />
-                    Add Connector
-                </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {CONNECTORS.map(connector => (
-                    <div key={connector.id} className="glass-card rounded-2xl p-6 flex flex-col justify-between h-48">
-                        <div className="flex items-center justify-between">
-                            <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-                                {connector.icon}
-                            </div>
-                            <span className={`text-[10px] px-2 py-1 rounded-full border uppercase tracking-widest ${connector.status === 'active'
-                                    ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5'
-                                    : 'text-amber-400 border-amber-500/20 bg-amber-500/5'
-                                }`}>
-                                {connector.status}
-                            </span>
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-lg mb-1">{connector.name}</h4>
-                            <p className="text-xs text-zinc-500">{connector.info}</p>
-                        </div>
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                            <button className="text-xs text-zinc-400 hover:text-white transition-colors">Settings</button>
-                            <ChevronRight size={16} className="text-zinc-600" />
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function StatsCard({ label, value, sub, trend }) {
-    return (
-        <div className="glass-card rounded-2xl p-6">
-            <span className="text-xs font-medium text-zinc-500 uppercase tracking-widest">{label}</span>
-            <div className="mt-2 flex items-end gap-3">
-                <span className="text-2xl font-bold">{value}</span>
-                <span className="text-[10px] text-indigo-400 mb-1 font-medium">{trend}</span>
-            </div>
-            <p className="mt-1 text-xs text-zinc-600">{sub}</p>
         </div>
     );
 }
